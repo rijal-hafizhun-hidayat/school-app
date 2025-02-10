@@ -1,13 +1,25 @@
 <script setup lang="ts">
 import type { LoginForm } from "~/types/login-interface";
 
+const { $api } = useNuxtApp();
 const form: LoginForm = reactive({
   email: "",
   password: "",
 });
 
-const send = () => {
-  console.log(form);
+const send = async (): Promise<void> => {
+  try {
+    const result = await ($api as any)("login", {
+      method: "post",
+      body: {
+        email: form.email,
+        password: form.password,
+      },
+    });
+    console.log(result);
+  } catch (error: any) {
+    console.log(error);
+  }
 };
 </script>
 <template>

@@ -1,6 +1,7 @@
 import { createError } from "h3";
 
 import { ZodType } from "zod";
+import { Error } from "../utils/error";
 
 export class Validation {
   static validate<T>(schema: ZodType, data: T): T {
@@ -10,10 +11,10 @@ export class Validation {
       throw createError({
         statusCode: 400,
         statusMessage: "Validation Error",
-        data: parsed.error.format(), // Return structured validation errors
+        data: Error.formatErrors(parsed.error), // Return structured validation errors
       });
     }
 
-    return parsed.data; // Return validated data
+    return parsed.data;
   }
 }

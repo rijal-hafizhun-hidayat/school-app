@@ -3,10 +3,11 @@ import {
   LoginResponse,
   toLoginResponse,
 } from "../model/login-model";
-import { Token } from "../utils/token";
+import { Token } from "../../utils/token";
 import { LoginValidation } from "../validation/login-validation";
 import { Validation } from "../validation/validation";
 import type { H3Event } from "h3";
+import prisma from "~/utils/prisma";
 
 export class LoginService {
   static async login(

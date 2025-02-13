@@ -23,6 +23,13 @@ model user {
   user_role  user_role?
 }
 
+model class_school {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar()
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
 model role {
   id         Int         @id @default(autoincrement())
   name       String      @unique @db.VarChar()

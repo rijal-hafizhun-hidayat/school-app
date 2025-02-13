@@ -5,7 +5,7 @@ export class LoginController {
   static login = defineEventHandler(async (event) => {
     try {
       const request: LoginRequest = (await readBody(event)) as LoginRequest;
-      const result = await LoginService.login(request);
+      const result = await LoginService.login(request, event);
       return {
         success: true,
         data: result,

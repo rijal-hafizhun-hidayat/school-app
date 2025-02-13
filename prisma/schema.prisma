@@ -24,10 +24,20 @@ model user {
 }
 
 model class_school {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar()
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar()
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  student    student[]
+}
+
+model student {
+  id              Int          @id @default(autoincrement())
+  name            String       @db.VarChar()
+  class_school_id Int          @db.Integer
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+  class_school    class_school @relation(fields: [class_school_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model role {

@@ -24,6 +24,7 @@
     "sweetalert2": "^11.16.0",
     "tsx": "^4.19.2",
     "vue": "latest",
+    "vue-multiselect": "^3.2.0",
     "vue-router": "latest",
     "zod": "^3.24.1"
   },

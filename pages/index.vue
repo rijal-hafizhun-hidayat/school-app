@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Validation } from "~/server/model/validation-model";
-import { Sweetalert } from "~/server/utils/sweetalert";
 import type { LoginForm } from "~/types/login-interface";
 const { loggedIn, user, fetch: refreshSesion } = useUserSession();
 

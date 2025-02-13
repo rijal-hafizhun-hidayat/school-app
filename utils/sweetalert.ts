@@ -11,7 +11,7 @@ export class Sweetalert {
   }
 
   static successAlert(message: string) {
-    return Swal.fire({
+    Swal.fire({
       title: "Success!",
       text: message,
       icon: "success",

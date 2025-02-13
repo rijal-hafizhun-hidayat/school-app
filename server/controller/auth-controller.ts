@@ -1,4 +1,4 @@
-import { AuthMiddleware } from "../utils/auth-middleware";
+import { AuthMiddleware } from "../../utils/auth-middleware";
 
 export class AuthController {
   static me = defineEventHandler(async (event) => {

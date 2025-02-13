@@ -1,7 +1,7 @@
 import { createError } from "h3";
 
 import { ZodType } from "zod";
-import { Error } from "../utils/error";
+import { Error } from "../../utils/error";
 
 export class Validation {
   static validate<T>(schema: ZodType, data: T): T {

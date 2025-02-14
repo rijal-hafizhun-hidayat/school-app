@@ -40,6 +40,13 @@ model student {
   class_school    class_school @relation(fields: [class_school_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
+model school_subject {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar()
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
 model role {
   id         Int         @id @default(autoincrement())
   name       String      @unique @db.VarChar()

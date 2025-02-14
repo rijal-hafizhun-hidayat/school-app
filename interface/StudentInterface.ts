@@ -6,6 +6,10 @@ export interface StudentForm {
   class_school: class_school | null;
 }
 
+export interface ClassSchoolSearch {
+  class_school: ClassSchool | null;
+}
+
 export interface StudentWithClassSchool {
   id: number;
   name: string;

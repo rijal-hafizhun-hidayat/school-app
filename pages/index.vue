@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { Validation } from "~/server/model/validation-model";
-import { Sweetalert } from "~/server/utils/sweetalert";
 import type { LoginForm } from "~/types/login-interface";
+const { loggedIn, user, fetch: refreshSesion } = useUserSession();
 
 const authStore = useAuthStore();
+const router = useRouter();
 const isLoading: Ref<boolean> = ref(false);
 const validation: Ref<Validation | null> = ref(null);
 const form: LoginForm = reactive({
@@ -15,6 +16,11 @@ const send = async (): Promise<void> => {
   try {
     isLoading.value = true;
     await authStore.login(form);
+    await refreshSesion();
+
+    router.push({
+      name: "dashboard",
+    });
   } catch (error: any) {
     const err = error.data as Validation;
     validation.value = err;

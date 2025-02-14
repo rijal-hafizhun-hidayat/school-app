@@ -1,6 +1,40 @@
 <script setup lang="ts">
-const showingNavigationDropdown: Ref<boolean> = ref(false);
+import type { Auth } from "~/interface/AuthInterface";
+import type { Validation } from "~/server/model/validation-model";
+
 const router = useRouter();
+const showingNavigationDropdown: Ref<boolean> = ref(false);
+const authUser: Ref<Auth | null> = ref(null);
+const authStore = useAuthStore();
+const isLoading: Ref<boolean> = ref(false);
+const validation: Ref<Validation | null> = ref(null);
+const { loggedIn, user, fetch: refreshSesion } = useUserSession();
+
+onMounted(() => {
+  if (loggedIn.value) {
+    authUser.value = user.value as Auth;
+  }
+});
+
+const logout = async (): Promise<void> => {
+  try {
+    isLoading.value = true;
+    await authStore.logout();
+    await refreshSesion();
+
+    router.push({
+      name: "index",
+    });
+  } catch (error: any) {
+    const err = error.data as Validation;
+    validation.value = err;
+    if (validation.value && validation.value.statusCode != 400) {
+      Sweetalert.errorAlert(validation.value.statusMessage);
+    }
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>
 <template>
   <div>
@@ -13,27 +47,51 @@ const router = useRouter();
                 <BaseApplicationLogo class="block fill-current text-gray-800" />
               </div>
               <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <NuxtLink
+                <RouterLink
                   active-class="border-indigo-700"
                   inactive-class="border-indigo-500"
                   class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out"
                   to="/dashboard"
                 >
                   Dashboard
-                </NuxtLink>
+                </RouterLink>
+                <RouterLink
+                  active-class="border-indigo-700"
+                  inactive-class="border-indigo-500"
+                  class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out"
+                  to="/class-school"
+                >
+                  class school
+                </RouterLink>
+                <RouterLink
+                  active-class="border-indigo-700"
+                  inactive-class="border-indigo-500"
+                  class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out"
+                  to="/student"
+                >
+                  student
+                </RouterLink>
+                <RouterLink
+                  active-class="border-indigo-700"
+                  inactive-class="border-indigo-500"
+                  class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out"
+                  to="/school-subject"
+                >
+                  school subject
+                </RouterLink>
               </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
               <div class="ml-3 relative">
-                <Dropdown align="right" width="48">
+                <BaseDropdown align="right" width="48">
                   <template #trigger>
                     <span class="inline-flex rounded-md">
                       <button
                         type="button"
                         class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                       >
-                        {{ "rijal hafizhun hidayat" }}
+                        {{ authUser?.name }}
 
                         <svg
                           class="ml-2 -mr-0.5 h-4 w-4"
@@ -54,10 +112,16 @@ const router = useRouter();
                     <a
                       class="cursor-pointer block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out"
                     >
+                      Profile
+                    </a>
+                    <a
+                      @click="logout"
+                      class="cursor-pointer block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out"
+                    >
                       Logout
                     </a>
                   </template>
-                </Dropdown>
+                </BaseDropdown>
               </div>
             </div>
 
@@ -106,12 +170,33 @@ const router = useRouter();
           class="sm:hidden"
         >
           <div class="pt-2 pb-3 space-y-1">
-            <NuxtLink
+            <RouterLink
               to="/dashboard"
               activeClass="border-indigo-500"
               exactActiveClass="border-indigo-900"
               class="block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
-              >Dashboard</NuxtLink
+              >Dashboard</RouterLink
+            >
+            <RouterLink
+              to="/class-school"
+              activeClass="border-indigo-500"
+              exactActiveClass="border-indigo-900"
+              class="block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
+              >class school</RouterLink
+            >
+            <RouterLink
+              to="/student"
+              activeClass="border-indigo-500"
+              exactActiveClass="border-indigo-900"
+              class="block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
+              >student</RouterLink
+            >
+            <RouterLink
+              to="/school-subject"
+              activeClass="border-indigo-500"
+              exactActiveClass="border-indigo-900"
+              class="block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
+              >school subject</RouterLink
             >
           </div>
 
@@ -119,15 +204,16 @@ const router = useRouter();
           <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
               <div class="font-medium text-base text-gray-800">
-                {{ "rijal hafizhun hidayat" }}
+                {{ authUser?.name }}
               </div>
               <div class="font-medium text-sm text-gray-500">
-                {{ "rijal.1344@gmail.com" }}
+                {{ authUser?.role }}
               </div>
             </div>
 
             <div class="mt-3 space-y-1">
               <a
+                @click="logout"
                 class="cursor-pointer block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
                 >Logout</a
               >

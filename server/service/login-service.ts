@@ -3,12 +3,17 @@ import {
   LoginResponse,
   toLoginResponse,
 } from "../model/login-model";
-import { Token } from "../utils/token";
+import { Token } from "../../utils/token";
 import { LoginValidation } from "../validation/login-validation";
 import { Validation } from "../validation/validation";
+import type { H3Event } from "h3";
+import prisma from "~/utils/prisma";
 
 export class LoginService {
-  static async login(request: LoginRequest): Promise<LoginResponse> {
+  static async login(
+    request: LoginRequest,
+    event: H3Event
+  ): Promise<LoginResponse> {
     const requestBody: LoginRequest = Validation.validate(
       LoginValidation.loginSchema,
       request
@@ -17,6 +22,13 @@ export class LoginService {
     const user = await prisma.user.findUnique({
       where: {
         email: requestBody.email,
+      },
+      include: {
+        user_role: {
+          include: {
+            role: true,
+          },
+        },
       },
     });
 
@@ -40,6 +52,14 @@ export class LoginService {
     }
 
     const token: string = await Token.generateToken(user);
+
+    await setUserSession(event, {
+      user: {
+        name: user.name,
+        email: user.email,
+        role: user.user_role?.role.name,
+      },
+    });
 
     return toLoginResponse(token);
   }

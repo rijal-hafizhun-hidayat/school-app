@@ -5,10 +5,12 @@ export class StudentController {
   static getAllStudentsWithClassSchool = defineEventHandler(async (event) => {
     try {
       const result = await StudentService.getAllStudentWithClassSchool();
+      const query = getQuery(event);
       return {
         statusCode: 200,
         statusMessage: "get student success",
         data: result,
+        query: query,
       };
     } catch (error) {
       return sendError(event, error as Error, false);
